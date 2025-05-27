@@ -1,8 +1,12 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { PreloadQuery } from '@/lib/apollo-rsc';
 import { GET_POSTS, GET_USERS } from '@/lib/queries';
 import { PostsList } from '@/components/posts-list';
 import { UsersList } from '@/components/users-list';
+
+// 동적 렌더링 강제 (빌드 시 prerendering 비활성화)
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (
@@ -17,9 +21,9 @@ export default function Home() {
 
           {/* 네비게이션 링크 */}
           <div className="mt-6">
-            <a href="/queryref-test" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+            <Link href="/queryref-test" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
               QueryRef 패턴 테스트 보기
-            </a>
+            </Link>
           </div>
         </div>
 

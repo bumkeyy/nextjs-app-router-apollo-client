@@ -1,16 +1,18 @@
 'use client';
 
-import { useReadQuery, QueryRef } from '@apollo/client';
-import { GetPostData, GetPostVariables } from '@/lib/types';
+import { useReadQuery } from '@apollo/client';
+import { GetPostData } from '@/lib/types';
 
 interface PostDetailProps {
-  queryRef: QueryRef<GetPostData, GetPostVariables>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  queryRef: any; // TransportedQueryRef 타입 호환성을 위해 any 사용
 }
 
 export function PostDetail({ queryRef }: PostDetailProps) {
   const { data } = useReadQuery(queryRef);
+  const typedData = data as GetPostData;
 
-  if (!data.post) {
+  if (!typedData.post) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
         <p className="text-gray-500 text-center">게시글을 찾을 수 없습니다.</p>
@@ -18,7 +20,7 @@ export function PostDetail({ queryRef }: PostDetailProps) {
     );
   }
 
-  const { post } = data;
+  const { post } = typedData;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">

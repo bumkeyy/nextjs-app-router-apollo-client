@@ -47,6 +47,21 @@ interface Post {
   createdAt: string;
 }
 
+// GraphQL 리졸버 타입 정의
+type ResolverContext = object;
+
+interface QueryResolvers {
+  users: () => User[];
+  user: (parent: unknown, args: { id: string }, context: ResolverContext) => User | undefined;
+  posts: () => (Post & { author: User })[];
+  post: (parent: unknown, args: { id: string }, context: ResolverContext) => (Post & { author: User }) | null;
+}
+
+interface MutationResolvers {
+  createUser: (parent: unknown, args: { name: string; email: string; age?: number }, context: ResolverContext) => User;
+  createPost: (parent: unknown, args: { title: string; content: string; authorId: string }, context: ResolverContext) => Post & { author: User };
+}
+
 // 가짜 데이터
 const users: User[] = [
   { id: '1', name: '김철수', email: 'kim@example.com', age: 30 },
@@ -82,13 +97,13 @@ const posts: Post[] = [
 const resolvers = {
   Query: {
     users: () => users,
-    user: (_: any, { id }: { id: string }) => users.find((user) => user.id === id),
+    user: (_parent: unknown, { id }: { id: string }) => users.find((user) => user.id === id),
     posts: () =>
       posts.map((post) => ({
         ...post,
         author: users.find((user) => user.id === post.authorId)!,
       })),
-    post: (_: any, { id }: { id: string }) => {
+    post: (_parent: unknown, { id }: { id: string }) => {
       const post = posts.find((p) => p.id === id);
       if (!post) return null;
       return {
@@ -96,9 +111,9 @@ const resolvers = {
         author: users.find((user) => user.id === post.authorId)!,
       };
     },
-  },
+  } satisfies QueryResolvers,
   Mutation: {
-    createUser: (_: any, { name, email, age }: { name: string; email: string; age?: number }) => {
+    createUser: (_parent: unknown, { name, email, age }: { name: string; email: string; age?: number }) => {
       const newUser: User = {
         id: String(users.length + 1),
         name,
@@ -108,7 +123,7 @@ const resolvers = {
       users.push(newUser);
       return newUser;
     },
-    createPost: (_: any, { title, content, authorId }: { title: string; content: string; authorId: string }) => {
+    createPost: (_parent: unknown, { title, content, authorId }: { title: string; content: string; authorId: string }) => {
       const author = users.find((user) => user.id === authorId);
       if (!author) {
         throw new Error('작성자를 찾을 수 없습니다.');
@@ -128,7 +143,7 @@ const resolvers = {
         author,
       };
     },
-  },
+  } satisfies MutationResolvers,
 };
 
 const schema = makeExecutableSchema({
@@ -144,4 +159,10 @@ const yoga = createYoga({
 });
 
 // Next.js App Router에서 사용할 핸들러
-export { yoga as GET, yoga as POST };
+export async function GET(request: Request) {
+  return yoga.fetch(request, {});
+}
+
+export async function POST(request: Request) {
+  return yoga.fetch(request, {});
+}

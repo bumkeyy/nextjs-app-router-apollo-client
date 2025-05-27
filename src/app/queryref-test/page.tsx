@@ -1,7 +1,11 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { PreloadQuery } from '@/lib/apollo-rsc';
 import { GET_POST } from '@/lib/queries';
 import { PostDetail } from '@/components/post-detail';
+
+// 동적 렌더링 강제 (빌드 시 prerendering 비활성화)
+export const dynamic = 'force-dynamic';
 
 export default function QueryRefTestPage() {
   return (
@@ -74,9 +78,9 @@ export default function QueryRefTestPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <a href="/" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+          <Link href="/" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
             메인 페이지로 돌아가기
-          </a>
+          </Link>
         </div>
       </div>
     </div>
