@@ -9,30 +9,47 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
       return 'http://localhost:3000/api/graphql';
     }
 
+    // 커스텀 도메인이 있는 경우 (가장 우선순위)
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/graphql`;
+      console.log('Using custom site URL:', url);
+      return url;
+    }
+
     // Vercel 배포 환경
-    if (process.env.VERCEL_URL) {
-      const url = `https://${process.env.VERCEL_URL}/api/graphql`;
+    const vercelUrl = process.env.VERCEL_URL;
+    if (vercelUrl) {
+      const url = `https://${vercelUrl}/api/graphql`;
       console.log('Using Vercel URL:', url);
       return url;
     }
 
-    // 기타 배포 환경 (커스텀 도메인)
+    // 절대 URL로 설정된 GRAPHQL_URL
     if (process.env.GRAPHQL_URL && process.env.GRAPHQL_URL.startsWith('http')) {
       console.log('Using custom GRAPHQL_URL:', process.env.GRAPHQL_URL);
       return process.env.GRAPHQL_URL;
     }
 
-    // 클라이언트 사이드 fallback
-    const fallbackUrl = process.env.NEXT_PUBLIC_GRAPHQL_URL || '/api/graphql';
-    console.log('Using fallback URL:', fallbackUrl);
-    return fallbackUrl;
+    // 최후의 수단 - 에러를 발생시켜서 문제를 명확히 함
+    const errorMsg = 'No valid GraphQL URL found. Please set NEXT_PUBLIC_SITE_URL or VERCEL_URL environment variable.';
+    console.error(errorMsg);
+    throw new Error(errorMsg);
   };
 
   const uri = getGraphQLUrl();
-  console.log('Apollo Client URI:', uri);
+  console.log('Final Apollo Client URI:', uri);
 
   return new ApolloClient({
     cache: new InMemoryCache(),
     uri,
+    // 에러 처리 개선
+    defaultOptions: {
+      watchQuery: {
+        errorPolicy: 'all',
+      },
+      query: {
+        errorPolicy: 'all',
+      },
+    },
   });
 });
