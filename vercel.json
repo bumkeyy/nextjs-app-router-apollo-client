@@ -6,13 +6,5 @@
     "src/app/api/graphql/route.ts": {
       "maxDuration": 30
     }
-  },
-  "security": {
-    "allowlist": [
-      {
-        "paths": ["/api/*"],
-        "action": "bypass"
-      }
-    ]
   }
 }
