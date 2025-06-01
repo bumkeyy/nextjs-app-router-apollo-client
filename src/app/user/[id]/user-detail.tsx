@@ -32,10 +32,10 @@ export default function UserDetail({ userId }: UserDetailProps) {
   if (!data?.user) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <div className="bg-yellow-50/90 backdrop-blur-sm border border-yellow-200 rounded-xl shadow-lg p-6">
           <h1 className="text-xl font-bold text-yellow-800 mb-2">사용자를 찾을 수 없습니다</h1>
           <p className="text-yellow-600">ID: {userId}</p>
-          <Link href="/users" className="inline-block mt-4 text-blue-600 hover:text-blue-800">
+          <Link href="/users" className="inline-block mt-4 text-blue-600 hover:text-blue-800 transition-colors">
             ← 사용자 목록으로 돌아가기
           </Link>
         </div>
@@ -48,51 +48,97 @@ export default function UserDetail({ userId }: UserDetailProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <Link href="/users" className="text-blue-600 hover:text-blue-800 flex items-center">
-          ← 사용자 목록으로 돌아가기
+        <Link href="/users" className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium">
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          사용자 목록으로 돌아가기
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-8">
-        <div className="border-b border-gray-200 pb-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{user.name}</h1>
-          <p className="text-gray-600 text-lg">사용자 상세 정보</p>
-          <div className="mt-2 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full inline-block">✨ SSR + useSuspenseQuery로 렌더링됨</div>
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border-b border-blue-200/30 p-8">
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">{user.name}</h1>
+              <p className="text-gray-600 text-lg mb-3">사용자 상세 정보</p>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm text-green-600 bg-green-50/80 px-3 py-1 rounded-full font-medium border border-green-200/50">✨ SSR + useSuspenseQuery</span>
+                <span className="text-sm text-blue-600 bg-blue-50/80 px-3 py-1 rounded-full font-medium border border-blue-200/50">🚀 PreloadQuery</span>
+              </div>
+            </div>
+
+            {/* 사용자 아바타 */}
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">{user.name.charAt(0).toUpperCase()}</div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">사용자 ID</label>
-              <p className="text-lg text-gray-900">{user.id}</p>
-            </div>
+        <div className="p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* 사용자 정보 */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/50">
+                  <label className="block text-sm font-medium text-gray-500 mb-2">사용자 ID</label>
+                  <p className="text-lg font-semibold text-gray-900">{user.id}</p>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">이름</label>
-              <p className="text-lg text-gray-900">{user.name}</p>
-            </div>
+                <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/50">
+                  <label className="block text-sm font-medium text-gray-500 mb-2">이름</label>
+                  <p className="text-lg font-semibold text-gray-900">{user.name}</p>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">이메일</label>
-              <p className="text-lg text-gray-900">{user.email}</p>
-            </div>
+                <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/50">
+                  <label className="block text-sm font-medium text-gray-500 mb-2">이메일</label>
+                  <p className="text-lg font-semibold text-gray-900">{user.email}</p>
+                </div>
 
-            {user.age && (
-              <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">나이</label>
-                <p className="text-lg text-gray-900">{user.age}세</p>
+                {user.age && (
+                  <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/50">
+                    <label className="block text-sm font-medium text-gray-500 mb-2">나이</label>
+                    <p className="text-lg font-semibold text-gray-900">{user.age}세</p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
 
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">SSR 정보</h3>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>• 🚀 이 페이지는 Server-Side Rendering으로 렌더링됩니다</p>
-              <p>• ⚡ PreloadQuery로 서버에서 데이터를 미리 로드했습니다</p>
-              <p>• 🔄 useSuspenseQuery로 추가 요청 없이 데이터 사용</p>
-              <p>• 📈 더 빠른 초기 로딩과 SEO 최적화</p>
-              <p>• 🎯 Header에서 현재 사용자 정보가 표시됩니다</p>
+            {/* SSR 정보 카드 */}
+            <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 rounded-xl p-6 border border-blue-200/30 backdrop-blur-sm">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">기술 스택</h3>
+              </div>
+
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center text-gray-700">
+                  <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                  Server-Side Rendering 활성화
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <span className="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                  PreloadQuery로 데이터 사전 로드
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <span className="w-2 h-2 bg-purple-400 rounded-full mr-3"></span>
+                  useSuspenseQuery로 즉시 렌더링
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+                  Error Boundary로 에러 처리
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <span className="w-2 h-2 bg-pink-400 rounded-full mr-3"></span>
+                  SEO 최적화 및 성능 향상
+                </div>
+              </div>
+
+              <div className="mt-6 p-3 bg-white/60 rounded-lg border border-blue-200/30">
+                <p className="text-xs text-gray-600 leading-relaxed">이 페이지는 Next.js App Router의 최신 기능과 Apollo Client의 PreloadQuery + useSuspenseQuery 패턴을 활용하여 최적의 성능을 제공합니다.</p>
+              </div>
             </div>
           </div>
         </div>
